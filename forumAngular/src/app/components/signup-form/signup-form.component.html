@@ -1,0 +1,76 @@
+<form method="POST" action="/signup">
+  <div>
+    <div class="card-title text-center">
+      <h3>Sign Up</h3>
+    </div>
+    <div class="form-group">
+      <label for="username">Username:</label>
+      <input
+        ngModel
+        name="username"
+        id="username"
+        type="text"
+        class="form-control"
+        placeholder="Enter username"
+        #username="ngModel"
+        required
+        minlength="3"
+        maxlength="20"
+        />
+    </div>
+    <div class="form-group">
+      <label for="inputEmail">Email address:</label>
+      <input
+        ngModel
+        required
+        type="email"
+        name="inputEmail"
+        id="inputEmail"
+        placeholder="Enter your email address"
+        class="form-control"
+        #inputEmail="ngModel"
+
+      />
+    </div>
+    <div class="form-group">
+      <label for="password">Password:</label>
+      <input
+        required
+        ngModel
+        minlength="8"
+        type="password"
+        name="password"
+        id="password"
+        placeholder="Password"
+        #password="ngModel"
+        class="form-control"
+      />
+    </div>
+    <div class="form-group">
+      <input
+        ngModel
+        required
+        minlength="8"
+        type="password"
+        name="confirmPassword"
+        id="confirmPassword"
+        placeholder="Confirm Password"
+        #confirmPassword="ngModel"
+        class="form-control"
+        pattern="{{password.value}}"
+      />
+    </div>
+    <div class="alert alert-danger" *ngIf="username.touched && username.invalid ||
+    password.touched && password.invalid || confirmPassword.touched && confirmPassword.invalid || inputEmail.touched && inputEmail.invalid " >
+        <p *ngIf="password.invalid && password.errors.minlength">Password should be at least 8 characters long</p>
+        <p *ngIf="password.invalid && password.errors.required">Password cannot be empty</p>
+        <p *ngIf="username.invalid && username.errors.required">username cannot be empty</p>
+        <p *ngIf="username.invalid && username.errors.minlength">username should be at least 3 characters long</p>
+        <p *ngIf="username.invalid && username.errors.maxlength">username should be the most 20 characters long</p>
+        <p *ngIf="inputEmail.invalid && inputEmail.errors.required">email cannot be empty</p>
+        <p *ngIf="confirmPassword.invalid && confirmPassword.errors.pattern ">Password don't match</p>
+
+        </div>    
+    <button class="btn btn-primary">Sign Up</button>
+  </div>
+</form>

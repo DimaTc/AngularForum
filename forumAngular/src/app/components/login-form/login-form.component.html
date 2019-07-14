@@ -1,0 +1,37 @@
+<form method="POST" action="/login">
+  <div class="">
+    <div class="card-title text-center">
+      <h3>Login</h3>
+    </div>
+    <div class="form-group">
+      <label for="inputEmail">Email address:</label>
+      <input
+        ngModel
+        type="email"
+        name="inputEmail"
+        id="inputEmail"
+        placeholder="Enter your email address"
+        class="form-control"
+        required
+        #inputEmail="ngModel"
+      />
+    </div>
+    <div class="form-group">
+      <label for="inputPassword">Password:</label>
+      <input
+        type="password"
+        ngModel
+        name="inputPassword"
+        id="inputPassword"
+        placeholder="Password"
+        class="form-control"
+        required
+        #inputPassword="ngModel"
+      />
+    </div>
+    <div class="alert alert-danger" *ngIf="inputPassword.touched && inputPassword.invalid || inputEmail.touched && inputEmail.invalid">
+        Missing username or password
+    </div>
+    <button class="btn btn-primary">Login</button>
+  </div>
+</form>
