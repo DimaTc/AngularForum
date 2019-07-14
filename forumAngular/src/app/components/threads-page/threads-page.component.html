@@ -1,1 +1,7 @@
-<p>threads-page works!</p>
+<div class="container">
+  <div class="thread" *ngFor="let thread of threads">
+    <!-- <a > -->
+    <thread [routerLink]="['/thread/' + thread.id]" [thread]="thread"></thread>
+    <!-- </a> -->
+  </div>
+</div>

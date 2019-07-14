@@ -1,15 +1,18 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit } from "@angular/core";
+import { Thread } from "src/app/models/Thread";
+import { ThreadsService } from "src/app/threads.service";
 
 @Component({
-  selector: 'app-threads-page',
-  templateUrl: './threads-page.component.html',
-  styleUrls: ['./threads-page.component.scss']
+  selector: "threads-page",
+  templateUrl: "./threads-page.component.html",
+  styleUrls: ["./threads-page.component.scss"]
 })
 export class ThreadsPageComponent implements OnInit {
+  threads: Thread[];
 
-  constructor() { }
-
-  ngOnInit() {
+  constructor(private threadService: ThreadsService) {
+    this.threads = threadService.getDummyThreads();
   }
 
+  ngOnInit() {}
 }

@@ -1,2 +1,50 @@
-<p>selected-thread works!</p>
-<p>Selected id: {{id}}</p>
+<div class="thread-preview m-1" *ngIf="!expand; else threadContent">
+  <div class="row d-flex align-items-stretch">
+    <div class="thread-title col-10">
+      <div class="ml-4">
+        <span>
+          {{ thread.title }}
+        </span>
+      </div>
+      <div class="ml-4">
+        <small
+          >{{ thread.creator.username }} -
+          {{ thread.date * 1000 | date: "dd/MM/yyyy - HH:mm" }}
+        </small>
+        <small class="ml-5"> views: {{ thread.views }} </small>
+        <small class="ml-3"> comments: {{ thread.comments.length }} </small>
+      </div>
+    </div>
+    <div class="last-comment col-2">
+      <div>
+        <span>
+          {{ thread.comments[thread.comments.length - 1].creator.username }}
+        </span>
+      </div>
+      <div>
+        <small>
+          {{
+            thread.comments[thread.comments.length - 1].date * 1000
+              | date: "dd/MM/yyyy - HH:mm"
+          }}
+        </small>
+      </div>
+    </div>
+  </div>
+</div>
+<ng-template #threadContent>
+  <div class="thread-content jumbotron container">
+    <div class="thread-title text-center">
+      <h2>{{ thread.title }}</h2>
+    </div>
+    <div class="comments">
+      <div class="comment" *ngFor="let comment of thread.comments">
+        <comment [comment]="comment"></comment>
+      </div>
+    </div>
+  </div>
+</ng-template>
+
+<!-- <div class="container" *ngFor="let comment of thread.comments"> -->
+<!-- <comment [comment]="comment"></comment> -->
+<!-- </div> -->
