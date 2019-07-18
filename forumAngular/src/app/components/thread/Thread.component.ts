@@ -37,7 +37,6 @@ export class ThreadComponent implements OnInit {
         this.loadingThread = true;
         this.loadingComments = true;
         this.threadService.getThreadById(threadId).subscribe(res => {
-          console.log(res["threads"][0]["title"]);
           this.thread = {
             id: res["threads"][0]["id"],
             title: res["threads"][0]["title"],
@@ -67,7 +66,7 @@ export class ThreadComponent implements OnInit {
       this.showForm = false;
       return;
     }
-    this.sendingComment =true;
+    this.sendingComment = true;
     this.commentsService
       .addNewComment(this.thread.id, this.newComment)
       .subscribe(res => {
@@ -75,5 +74,7 @@ export class ThreadComponent implements OnInit {
         this.comments.push(res["comment"]);
         this.sendingComment = false;
       });
+    this.newComment = "";
+
   }
 }

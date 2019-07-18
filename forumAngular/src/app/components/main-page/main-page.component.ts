@@ -35,7 +35,6 @@ export class MainPageComponent {
         })
         .finally(() => {
           this.waiting = false;
-          console.log("aaa");
         });
     }
   }

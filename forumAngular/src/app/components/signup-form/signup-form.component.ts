@@ -16,10 +16,6 @@ export class SignupFormComponent implements OnInit {
   signing: boolean;
   signError: string = "";
 
-  log(input) {
-    console.log(input);
-  }
-
   constructor(private usersService: UsersService, private router: Router) {}
 
   onSubmit() {

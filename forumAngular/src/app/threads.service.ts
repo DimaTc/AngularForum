@@ -19,7 +19,7 @@ export class ThreadsService {
   ) {}
 
   addThread(title: string, comment: string) {
-    return this.http.post(environment.serverUrl + "/api/threads/add", {
+    return this.http.post(environment.serverUrl + "api/threads/add", {
       title,
       comment,
       ...this.getAuthObject()
@@ -27,7 +27,7 @@ export class ThreadsService {
   }
 
   getAllThreads() {
-    return this.http.post(environment.serverUrl + "/api/threads", this.getAuthObject());
+    return this.http.post(environment.serverUrl + "api/threads", this.getAuthObject());
   }
 
   getDummyThreads(): Thread[] {
@@ -36,7 +36,7 @@ export class ThreadsService {
 
   getThreadById(id: string){
     
-    return this.http.post(environment.serverUrl + "/api/threads", {
+    return this.http.post(environment.serverUrl + "api/threads", {
       ...this.getAuthObject(),
       thread_id:id
     });

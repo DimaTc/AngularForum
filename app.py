@@ -1,5 +1,5 @@
 from flask_cors import CORS
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify,render_template
 from flask_pymongo import PyMongo, DESCENDING, ObjectId
 import hashlib
 import time
@@ -43,12 +43,6 @@ def get_auth_token(user, passhash):
     return str(hashlib.sha1((user + passhash + str(time.time() * (random.random() + 1681))).encode()).hexdigest())
 
 
-@app.route('/')
-def index():
-    print("Got a req")
-    test = str(userCollection.find_one())
-    print(test)
-    return "Ttest"
 
 
 @app.route('/api/login', methods=['POST'])
@@ -166,7 +160,6 @@ def get_threads():
             thread_id =  ObjectId(request.get_json()['thread_id'])
             db_threads = threadCollection.find({'_id': thread_id})
             #add view if a specific thread was selected
-            print("incr")
             threadCollection.update_one({'_id':thread_id},{'$inc':{'views':1}})
         except:
             db_threads = threadCollection.find()
@@ -305,9 +298,9 @@ def get_comments():
         return jsonify({'status': 'error', 'error': 'unknown error'})
 
 
-@app.route('/api/thread_view', methods=['POST'])
-def add_view():
-    pass
 
+@app.route('/')
+def index():
+    return render_template('index.html')
 
 app.run(debug=True, port=1234)

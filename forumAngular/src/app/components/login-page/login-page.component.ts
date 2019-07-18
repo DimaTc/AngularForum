@@ -12,7 +12,6 @@ export class LoginPageComponent {
 
   constructor(private router: Router, private userService: UsersService) {
     this.targetForm = router.url.replace("/", "");
-    console.log(userService.getLoggedInUser());
     // if (userService.getLoggedInUser() != undefined) router.navigate([""]);
   }
 }

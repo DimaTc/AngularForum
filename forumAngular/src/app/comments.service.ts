@@ -11,14 +11,14 @@ import { environment } from "src/environments/environment";
 export class CommentsService {
   constructor(private http: HttpClient, private usersService: UsersService) {}
   getThreadComments(id: string) {
-    return this.http.post(environment.serverUrl + "/api/comments", {
+    return this.http.post(environment.serverUrl + "api/comments", {
       thread_id: id,
       ...this.getAuthObject()
     });
   }
 
   addNewComment(threadId: string, content: string) {
-    return this.http.post(environment.serverUrl + "/api/comments/add", {
+    return this.http.post(environment.serverUrl + "api/comments/add", {
       "thread_id":threadId,
       content,
       ...this.getAuthObject()

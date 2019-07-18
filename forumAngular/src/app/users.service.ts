@@ -18,7 +18,6 @@ export class UsersService {
         authToken: token
       })
       .subscribe(res => {
-        console.log(res);
       });
   }
 
@@ -43,7 +42,7 @@ export class UsersService {
       username,
       password
     };
-    return this.http.post(environment.serverUrl + "/api/login", user);
+    return this.http.post(environment.serverUrl + "api/login", user);
   }
 
   signup(username: string, password: string, email: string) {
@@ -52,14 +51,15 @@ export class UsersService {
       password,
       email
     };
-    return this.http.post(environment.serverUrl + "/api/signup", user);
+    return this.http.post(environment.serverUrl + "api/signup", user);
   }
 
   getUserFromServer(): Promise<any> {
     let token: string = localStorage.getItem("authToken");
+    let path = environment.serverUrl + "api/get_user"; 
     return new Promise((resolved, reject) => {
       this.http
-        .post(environment.serverUrl + "/api/get_user", { authToken: token })
+        .post(environment.serverUrl + "api/get_user", { authToken: token })
         .subscribe(res => {
           if (res["status"] == "found") resolved(res);
           else reject(res);
