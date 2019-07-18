@@ -1,4 +1,7 @@
 <div class="container">
+  <div class="controls ml-2 mb-4 mt-5">
+    <button class="btn btn-success">New Thread</button>
+  </div>
   <div class="thread" *ngFor="let thread of threads">
     <!-- <a > -->
     <thread [routerLink]="['/thread/' + thread.id]" [thread]="thread"></thread>

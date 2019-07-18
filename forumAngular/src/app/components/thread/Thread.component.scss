@@ -5,7 +5,8 @@ $foreColor: complement($bgColor);
   cursor: pointer;
   font-weight: bold;
   overflow: hidden;
-  border-radius: 1em;
+  border-radius: 0.5em;
+  box-shadow: 0 1em 5em 1em $bgColor;
   border: 2px solid $borderColor;
   .last-comment {
     background-color: $bgColor;

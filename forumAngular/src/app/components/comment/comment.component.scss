@@ -1,0 +1,16 @@
+
+$borderColor: rgb(64, 103, 219);
+.comment{
+    border-radius: 0.5em;
+    margin:1em;
+    border: 1px solid $borderColor;
+    overflow:hidden;
+
+    .card-header{
+        background-color: lighten($borderColor, 40%);
+    }
+
+    .card-body{
+        background-color: lighten($borderColor, 45%);
+    }
+}

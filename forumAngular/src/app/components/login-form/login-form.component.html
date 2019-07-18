@@ -1,26 +1,26 @@
-<form method="POST" action="/login">
+<form method="POST" action="/login" (submit)="onSubmit()">
   <div class="">
     <div class="card-title text-center">
       <h3>Login</h3>
     </div>
     <div class="form-group">
-      <label for="inputEmail">Email address:</label>
+      <label for="inputUsername">Username:</label>
       <input
-        ngModel
-        type="email"
-        name="inputEmail"
-        id="inputEmail"
-        placeholder="Enter your email address"
+        [(ngModel)]="username"
+        type="text"
+        name="inputUsername"
+        id="inputUsername"
+        placeholder="Enter your username"
         class="form-control"
         required
-        #inputEmail="ngModel"
+        #inputUsername="ngModel"
       />
     </div>
     <div class="form-group">
       <label for="inputPassword">Password:</label>
       <input
         type="password"
-        ngModel
+        [(ngModel)]="password"
         name="inputPassword"
         id="inputPassword"
         placeholder="Password"
@@ -29,9 +29,12 @@
         #inputPassword="ngModel"
       />
     </div>
-    <div class="alert alert-danger" *ngIf="inputPassword.touched && inputPassword.invalid || inputEmail.touched && inputEmail.invalid">
+    <div class="alert alert-danger" *ngIf="inputPassword.touched && inputPassword.invalid || inputUsername.touched && inputUsername.invalid">
         Missing username or password
     </div>
-    <button class="btn btn-primary">Login</button>
+    <input type="submit" class="btn btn-primary" value="Login"/>
+    <div *ngIf="loginError.length > 0" class="alert alert-danger">
+      <p>{{loginError}}</p>
+    </div>
   </div>
 </form>

@@ -1,3 +1,5 @@
+import { User } from './models/User';
+import { UsersService } from './users.service';
 import { Component } from '@angular/core';
 
 @Component({
@@ -6,5 +8,15 @@ import { Component } from '@angular/core';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
-  title = 'forumAngular';
+  currentUser :User;
+  constructor(private userService: UsersService) {
+    userService.getUserFromServer().then(
+      res=>{
+        this.currentUser = {
+          username:res['username'],
+          id:res['id'],
+          online:true
+        }
+      });
+  }
 }
