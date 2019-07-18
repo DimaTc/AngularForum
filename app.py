@@ -6,10 +6,10 @@ import time
 import random
 app = Flask(__name__)
 app.config['MONGO_DBNAME'] = 'forum'
-app.config['MONGO_URI'] = 'mongodb://localhost:27017/forum'
+app.config['MONGO_URI'] = 'mongodb://localhost:27017/forum' #Enter your DB server address
 
 # for development
-CORS(app)
+# CORS(app)
 #
 
 mongo = PyMongo(app)
@@ -17,26 +17,6 @@ mongo = PyMongo(app)
 userCollection = mongo.db.users
 commentCollection = mongo.db.comments
 threadCollection = mongo.db.threads
-"""
-User:
-    id:string;
-    username: string;
-    online: boolean;
-
-Thread:
-    id: string;
-    title: string;
-    comments: Comment[];
-    creator: User;
-    views: number;
-    date: number;
-
-Comment:
-    id: string;
-    creator: User;
-    date: number;
-    content: string;
-"""
 
 
 def get_auth_token(user, passhash):
