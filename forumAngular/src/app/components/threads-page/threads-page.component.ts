@@ -11,7 +11,23 @@ export class ThreadsPageComponent implements OnInit {
   threads: Thread[];
 
   constructor(private threadService: ThreadsService) {
-    this.threads = threadService.getDummyThreads();
+    threadService.getAllThreads().subscribe(res=>{
+      if(res['status'] != 'ok')
+        return
+      this.threads = res['threads'].map(threadVal => <Thread>({
+        id:threadVal['id'],
+        title: threadVal['title'],
+        date: threadVal['date'],
+        commentsCount:threadVal['comments'],
+        views:threadVal['views'],
+        lastComment:{
+          creator:threadVal.last_comment['creator'],
+          date:threadVal.last_comment['date'],
+          content:''
+        },
+        creator:threadVal['creator']
+      }));
+    })
   }
 
   ngOnInit() {}

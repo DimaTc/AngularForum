@@ -1,15 +1,29 @@
-import { Component, OnInit } from '@angular/core';
+import { ThreadsService } from './../../threads.service';
+import { Component, OnInit } from "@angular/core";
+import { Router } from '@angular/router';
 
 @Component({
-  selector: 'app-thread-form',
-  templateUrl: './thread-form.component.html',
-  styleUrls: ['./thread-form.component.scss']
+  selector: "app-thread-form",
+  templateUrl: "./thread-form.component.html",
+  styleUrls: ["./thread-form.component.scss"]
 })
-export class ThreadFormComponent implements OnInit {
+export class ThreadFormComponent {
+  title: string = "";
+  comment: string = "";
+  showErrors: boolean = false;
+  constructor(private threadService: ThreadsService, private router: Router) {}
 
-  constructor() { }
-
-  ngOnInit() {
+  onSubmit() {
+    if (this.title.length === 0 || this.comment.length === 0) {
+      console.log("Error");
+      this.showErrors = true;
+      return;
+    }
+    this.threadService.addThread(this.title, this.comment).subscribe(res=>{
+      if(res['status'] == 'error')
+        console.log(res['error']);
+      else if(res['status'] === "ok")
+        this.router.navigate([''])
+    });
   }
-
 }

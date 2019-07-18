@@ -1,4 +1,12 @@
 <div *ngIf="currentUser !== undefined">
-
+    <div class="w-75 m-auto d-flex justify-content-end" *ngIf="currentUser != undefined">
+        <span class="mr-3 align-self-center">
+          Username:
+          <b>
+              {{currentUser.username}}
+          </b>
+        </span>
+        <button class="btn btn-danger float-right mr-5" (click)="logout()">Log out</button>
+</div>
   <threads-page></threads-page>
 </div>

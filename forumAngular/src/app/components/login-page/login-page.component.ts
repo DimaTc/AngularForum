@@ -1,3 +1,4 @@
+import { UsersService } from "./../../users.service";
 import { ActivatedRoute, Router } from "@angular/router";
 import { Component, OnInit } from "@angular/core";
 
@@ -9,7 +10,9 @@ import { Component, OnInit } from "@angular/core";
 export class LoginPageComponent {
   targetForm: String = "login";
 
-  constructor(private router: Router) {
+  constructor(private router: Router, private userService: UsersService) {
     this.targetForm = router.url.replace("/", "");
+    console.log(userService.getLoggedInUser());
+    // if (userService.getLoggedInUser() != undefined) router.navigate([""]);
   }
 }

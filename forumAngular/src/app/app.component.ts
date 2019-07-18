@@ -1,3 +1,4 @@
+import { Router } from '@angular/router';
 import { User } from './models/User';
 import { UsersService } from './users.service';
 import { Component } from '@angular/core';
@@ -8,15 +9,6 @@ import { Component } from '@angular/core';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
-  currentUser :User;
-  constructor(private userService: UsersService) {
-    userService.getUserFromServer().then(
-      res=>{
-        this.currentUser = {
-          username:res['username'],
-          id:res['id'],
-          online:true
-        }
-      });
-  }
+
+
 }

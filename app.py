@@ -1,13 +1,17 @@
-from flask import Flask, request, jsonify
-from flask_pymongo import PyMongo
 from flask_cors import CORS
+from flask import Flask, request, jsonify
+from flask_pymongo import PyMongo, DESCENDING, ObjectId
 import hashlib
 import time
 import random
 app = Flask(__name__)
 app.config['MONGO_DBNAME'] = 'forum'
 app.config['MONGO_URI'] = 'mongodb://localhost:27017/forum'
+
+# for development
 CORS(app)
+#
+
 mongo = PyMongo(app)
 
 userCollection = mongo.db.users
@@ -66,20 +70,20 @@ def get_user():
                 {'_id': db_user['_id']}, {'$set': updatedUser})
             db_user.update({'authToken': auth_token})
             return jsonify({
-                'status':'ok',
+                'status': 'ok',
                 'id': str(db_user['_id']),
                 'username': username,
                 'online': True,
                 'authToken': auth_token
             })
         return jsonify({
-            'status':'error',
+            'status': 'error',
             'error': 'username or password are incorrect'
         })
     except Exception as e:
         print(e)
     return jsonify({
-        'status':'error',
+        'status': 'error',
         'error': 'unknown'
     })
 
@@ -87,7 +91,7 @@ def get_user():
 @app.route('/api/signup', methods=['POST'])
 def add_user():
     try:
-        username = request.get_json()['username']
+        username = str(request.get_json()['username']).lower()
         email = request.get_json()['email']
         db_user = userCollection.find_one({'username': username})
         if db_user != None:
@@ -105,7 +109,7 @@ def add_user():
             'password': passhash,
             'email': email,
             'date_joined': int(time.time()),
-            'authToken':token
+            'authToken': token
         }
         userCollection.insert_one(user)
         return jsonify({'status': 'ok', 'authToken': token})
@@ -117,31 +121,193 @@ def add_user():
         'error': 'unknown'
     })
 
+
 @app.route('/api/get_user', methods=['POST'])
 def get_user_by_token():
     token = request.get_json()['authToken']
     if(token == None):
-        return jsonify({'status':'not_found'})
+        return jsonify({'status': 'not_found'})
 
-    user = userCollection.find_one({'authToken':token})
+    user = userCollection.find_one({'authToken': token})
     if user == None:
-        return jsonify({'status':'not_found'})
-    userCollection.update_one({'authToken':user['authToken']}, {'$set':{'logged_in': time.time()}})
+        return jsonify({'status': 'not_found'})
+    userCollection.update_one({'authToken': user['authToken']}, {
+                              '$set': {'logged_in': int(time.time())}})
     return jsonify({
-        'status':'found',
-        'username':user['username'],
-        'online':True,
-        'id':str(user['_id'])
+        'status': 'found',
+        'username': user['username'],
+        'online': True,
+        'id': str(user['_id'])
     })
+
 
 @app.route('/api/logout', methods=['POST'])
 def logout():
     token = request.get_json()['authToken']
     username = request.get_json()['username']
-    user = userCollection.find_one({'authToken':token})
+    user = userCollection.find_one({'authToken': token})
     if user['username'] == username:
-        userCollection.update_one({'authToken':token},{'$unset':{'authToken':1}})
-        return jsonify({'status':'ok'})
+        userCollection.update_one({'authToken': token}, {
+                                  '$unset': {'authToken': 1}})
+        return jsonify({'status': 'ok'})
     else:
-        return jsonify({'status':'error','error':'invalid token or username'})
+        return jsonify({'status': 'error', 'error': 'invalid token or username'})
+
+
+@app.route('/api/threads', methods=['POST'])
+def get_threads():
+    try:
+        username = request.get_json()['username']
+        token = request.get_json()['authToken']
+        db_user = userCollection.find_one({'authToken': token})
+        if db_user['username'] != username:
+            return jsonify({'status': 'error', 'error': 'authintication error'})
+        try:
+            thread_id =  ObjectId(request.get_json()['thread_id'])
+            db_threads = threadCollection.find({'_id': thread_id})
+            #add view if a specific thread was selected
+            print("incr")
+            threadCollection.update_one({'_id':thread_id},{'$inc':{'views':1}})
+        except:
+            db_threads = threadCollection.find()
+        threads = []
+        for thread in db_threads:
+            try:
+                db_creator = userCollection.find_one(
+                    {'_id': thread['creator']})
+
+                db_last_comment = commentCollection.find_one(
+                    {'_id': {'$in': thread['comments']}}, sort=[{'_id', -1}])
+
+                db_comment_creator = userCollection.find_one(
+                    {'_id': db_last_comment['creator']})
+
+                last_comment = {
+                    'creator': db_comment_creator['username'],
+                    'date': db_last_comment['date']
+                }
+                threads.append({
+                    "id": str(thread['_id']),
+                    "title": thread['title'],
+                    "creator": db_creator['username'],
+                    "date": thread['date'],
+                    "views": thread['views'],
+                    "comments": len(thread['comments']),
+                    "last_comment": last_comment
+                })
+            except Exception as e:
+                print("Error with a thread:" + str(e))
+
+        return jsonify({'status': 'ok', 'threads': threads})
+    except Exception as e:
+        print('exception (in get threads): ')
+        print(e)
+        return jsonify({'status': 'error', 'error': 'unknown error'})
+
+
+@app.route('/api/threads/add', methods=['POST'])
+def add_thread():
+    try:
+        username = request.get_json()['username']
+        token = request.get_json()['authToken']
+        db_user = userCollection.find_one({'authToken': token})
+        if(db_user['username'] != username):
+            return jsonify({'status': 'error', 'error': 'authintication error'})
+    except Exception as e:
+        return jsonify({'status': 'error', 'error': 'exception in authintication'})
+    try:
+        title = request.get_json()['title']
+        comment_text = request.get_json()['comment']
+        thread = threadCollection.insert_one({
+            'creator': db_user['_id'],
+            'title': title,
+            'date': int(time.time()),
+            'views': 1
+        })
+        comment = commentCollection.insert_one({
+            'creator': db_user['_id'],
+            'content': comment_text,
+            'date': int(time.time()),
+            'thread': thread.inserted_id
+        })
+        threadCollection.update_one(
+            {'_id': thread.inserted_id},
+            {'$set':
+             {"comments": [comment.inserted_id]}
+             })
+        return jsonify({'status': 'ok'})
+
+    except Exception as e:
+        print('Exception')
+        print(e)
+        return jsonify({'status': 'error', 'error': 'unknown error'})
+
+
+@app.route('/api/comments/add', methods=['POST'])
+def add_comment():
+    try:
+        username = request.get_json()['username']
+        token = request.get_json()['authToken']
+        db_user = userCollection.find_one({'authToken': token})
+        if db_user['username'] != username:
+            return jsonify({'status': 'error', 'error': 'authintication error'})
+        thread_id = ObjectId(request.get_json()['thread_id'])
+        comment_content = request.get_json()['content']
+        comment_inserted = commentCollection.insert_one({
+            'creator': db_user['_id'],
+            'date': int(time.time()),
+            'content': comment_content,
+            'thread': thread_id
+        })
+        print(comment_inserted.inserted_id)
+        thread_db = threadCollection.update_one(
+            {'_id': thread_id},
+            {'$push':  {
+                "comments": comment_inserted.inserted_id
+            }}
+        )
+
+        return jsonify({'status': 'ok','comment':{
+            'content':comment_content,
+            'creator':db_user['username'],
+            'date': int(time.time()),
+            'id':str(comment_inserted.inserted_id)
+        }})
+    except Exception as e:
+        print("Exception in adding comment:" + str(e))
+        return jsonify({'status': 'error', 'error': 'unknown error'})
+
+
+@app.route('/api/comments', methods=['POST'])
+def get_comments():
+    try:
+        username = request.get_json()['username']
+        token = request.get_json()['authToken']
+        db_user = userCollection.find_one({'authToken': token})
+        if db_user['username'] != username:
+            return jsonify({'status': 'error', 'error': 'authintication error'})
+        thread_id = request.get_json()['thread_id']
+        db_comments = commentCollection.find({'thread': ObjectId(thread_id)})
+        comments = []
+        for comment in db_comments:
+            creator = userCollection.find_one({'_id': comment['creator']})
+            creator_name = creator['username']
+            comments.append({
+                'content': comment['content'],
+                'id': str(comment['_id']),
+                'creator': creator_name,
+                'date': comment['date']
+            })
+        return jsonify({'status': 'ok', 'comments': comments})
+    except Exception as e:
+        print("exception in get comments:")
+        print(e)
+        return jsonify({'status': 'error', 'error': 'unknown error'})
+
+
+@app.route('/api/thread_view', methods=['POST'])
+def add_view():
+    pass
+
+
 app.run(debug=True, port=1234)

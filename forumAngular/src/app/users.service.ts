@@ -24,10 +24,18 @@ export class UsersService {
 
   setLoggedInUser(user: User) {
     this.signedUser = user;
+    localStorage.setItem("username",user.username)
   }
 
   getLoggedInUser(): User {
+    // if(this.signedUser === undefined)
+      // return {username:localStorage.getItem('username'),online:true};
     return this.signedUser;
+  }
+  getLoggedInUsername(): string {
+    if(this.signedUser === undefined)
+      return localStorage.getItem('username');
+    return this.signedUser.username;
   }
 
   login(username: string, password: string) {

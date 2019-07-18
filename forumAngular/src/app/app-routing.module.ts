@@ -1,3 +1,4 @@
+import { ThreadFormComponent } from './components/thread-form/thread-form.component';
 import { ThreadComponent } from './components/thread/Thread.component';
 import { LoginPageComponent } from './components/login-page/login-page.component';
 import { MainPageComponent } from './components/main-page/main-page.component';
@@ -9,7 +10,8 @@ const routes: Routes = [
   {path:'', component:MainPageComponent},
   {path:'login', component:LoginPageComponent},
   {path:'signup', component:LoginPageComponent},
-  {path:'thread/:id', component:ThreadComponent}
+  {path:'thread/:id', component:ThreadComponent},
+  {path:'newThread',component:ThreadFormComponent}
 ];
 
 @NgModule({

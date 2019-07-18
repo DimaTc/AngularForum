@@ -8,33 +8,42 @@ import { Router } from "@angular/router";
   templateUrl: "./main-page.component.html",
   styleUrls: ["./main-page.component.scss"]
 })
-export class MainPageComponent implements OnInit {
+export class MainPageComponent {
   currentUser: User;
-  waiting = true;
+  waiting = false;
+  failed = false;
   constructor(private router: Router, private userService: UsersService) {
-    userService
-      .getUserFromServer()
-      .then(res => {
-        this.currentUser = {
-          username:res['username'],
-          id:res['id'],
-          online:true
-        };
-        userService.setLoggedInUser(this.currentUser);
-      })
-      .catch(res => this.router.navigate(["login"]))
-      .finally(() => (this.waiting = false));
+    this.getUser();
   }
 
-  ngOnInit(){
-    console.log("test");
+  getUser() {
+    if (!this.waiting && !this.failed) {
+      this.waiting = true;
+      this.userService
+        .getUserFromServer()
+        .then(res => {
+          this.currentUser = {
+            username: res["username"],
+            id: res["id"],
+            online: true
+          };
+          this.userService.setLoggedInUser(this.currentUser);
+        })
+        .catch(res => {
+          this.router.navigate(["login"]);
+          this.failed = true;
+        })
+        .finally(() => {
+          this.waiting = false;
+          console.log("aaa");
+        });
+    }
   }
-
-  logout(){
+  logout() {
     this.userService.logout();
-    localStorage.removeItem('authToken');
+    localStorage.removeItem("authToken");
+    localStorage.removeItem("username");
     this.currentUser = undefined;
-    this.router.navigate(['login'])
+    this.router.navigate(["login"]);
   }
-
 }

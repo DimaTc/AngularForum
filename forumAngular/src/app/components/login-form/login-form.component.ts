@@ -28,6 +28,7 @@ export class LoginFormComponent implements OnInit {
         }
         let token = res['authToken'];
         localStorage.setItem('authToken', token);
+        localStorage.setItem('username',res['username']);
         let user: User ={
           username: res['username'],
           id: res['id'],

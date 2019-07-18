@@ -1,4 +1,7 @@
-<div class="thread-preview m-1" *ngIf="!expand; else threadContent">
+<div
+  class="thread-preview m-1"
+  *ngIf="!expand && thread !== undefined; else threadContent"
+>
   <div class="row d-flex align-items-stretch">
     <div class="thread-title col-10">
       <div class="ml-4">
@@ -8,43 +11,67 @@
       </div>
       <div class="ml-4">
         <small
-          >{{ thread.creator.username }} -
+          >{{ thread.creator }} -
           {{ thread.date * 1000 | date: "dd/MM/yyyy - HH:mm" }}
         </small>
         <small class="ml-5"> views: {{ thread.views }} </small>
-        <small class="ml-3"> comments: {{ thread.comments.length }} </small>
+        <small class="ml-3"> comments: {{ thread.commentsCount }} </small>
       </div>
     </div>
     <div class="last-comment col-2">
       <div>
         <span>
-          {{ thread.comments[thread.comments.length - 1].creator.username }}
+          {{ thread.lastComment.creator }}
         </span>
       </div>
       <div>
         <small>
-          {{
-            thread.comments[thread.comments.length - 1].date * 1000
-              | date: "dd/MM/yyyy - HH:mm"
-          }}
+          {{ thread.lastComment.date * 1000 | date: "dd/MM/yyyy - HH:mm" }}
         </small>
       </div>
     </div>
   </div>
 </div>
 <ng-template #threadContent>
-  <div class="thread-content jumbotron container">
+  <div
+    class="thread-content jumbotron container"
+    *ngIf="!loadingComments && !loadingThread; else load_screen"
+  >
     <div class="thread-title text-center">
       <h2>{{ thread.title }}</h2>
     </div>
     <div class="comments">
-      <div class="comment" *ngFor="let comment of thread.comments">
+      <div class="comment" *ngFor="let comment of comments">
         <comment [comment]="comment"></comment>
       </div>
     </div>
+    <div *ngIf="!showForm">
+      <button class="btn btn-success" (click)="showForm = true">
+        New Comment
+      </button>
+    </div>
+    <form method="POST" (submit)="onSubmit()" *ngIf="showForm">
+      <div class="input-group">
+        <textarea
+        [(ngModel)]="newComment"
+          name="commentArea"
+          id="commentArea"
+          class="form-control"
+          cols="30"
+          rows="10"
+          disabled="{{sendingComment}}"
+        ></textarea>
+      </div>
+      <div class="input-group">
+        <button type="submit" class="btn btn-primary">Submit</button>
+      </div>
+    </form>
   </div>
 </ng-template>
-
-<!-- <div class="container" *ngFor="let comment of thread.comments"> -->
-<!-- <comment [comment]="comment"></comment> -->
-<!-- </div> -->
+<ng-template #load_screen>
+  <div class="jumbotron w-50 ml-auto mr-auto mt-5">
+    <div class="alert alert-info">
+      Loading Thread...
+    </div>
+  </div>
+</ng-template>

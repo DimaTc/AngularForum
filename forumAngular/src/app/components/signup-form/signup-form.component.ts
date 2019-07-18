@@ -2,6 +2,7 @@ import { User } from "./../../models/User";
 import { UsersService } from "./../../users.service";
 import { Component, OnInit } from "@angular/core";
 import { FormsModule, FormGroup } from "@angular/forms";
+import { Router } from '@angular/router';
 
 @Component({
   selector: "signup-form",
@@ -19,7 +20,7 @@ export class SignupFormComponent implements OnInit {
     console.log(input);
   }
 
-  constructor(private usersService: UsersService) {}
+  constructor(private usersService: UsersService, private router: Router) {}
 
   onSubmit() {
     this.signError = "";
@@ -37,6 +38,8 @@ export class SignupFormComponent implements OnInit {
             }
             let authToken = res['authToken'];
             localStorage.setItem('authToken', authToken);
+            localStorage.setItem('username',this.usernameString)
+            this.router.navigate([''])
           }
         },
         err => {

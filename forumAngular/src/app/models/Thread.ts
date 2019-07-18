@@ -2,10 +2,11 @@ import { User } from "./User";
 import { Comment } from "./Comment";
 
 export class Thread {
-  id: string;
+  id?: string;
   title: string;
-  comments: Comment[];
-  creator: User;
-  views: number;
+  lastComment?: Comment;
+  commentsCount?:number;
+  creator: string;
+  views?: number;
   date: number;
 }

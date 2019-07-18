@@ -1,3 +1,7 @@
+import { UsersService } from "./users.service";
+import { environment } from "src/environments/environment";
+import { HttpClient } from "@angular/common/http";
+import { User } from "./models/User";
 import { Injectable } from "@angular/core";
 import { Thread } from "./models/Thread";
 import { CommentsService } from "./comments.service";
@@ -8,48 +12,39 @@ import { CommentsService } from "./comments.service";
 export class ThreadsService {
   dummyThreads: Thread[];
 
-  constructor(private comments: CommentsService) {
-    this.dummyThreads = [
-      {
-        id: "1",
-        creator: { id: "1", username: "Dima", online: true },
-        date: 1563098127,
-        comments: comments.getDummyComments(),
-        title: "Main Thread",
-        views: 20
-      },
-      {
-        id: "2",
-        creator: { id: "1", username: "Dima", online: true },
-        date: 1563138127,
-        comments: [comments.getDummyComments()[0]],
-        title: "other thread",
-        views: 20
-      },
-      {
-        id: "3",
-        creator: { id: "1", username: "Dima", online: true },
-        date: 1563138127,
-        comments: [comments.getDummyComments()[0]],
-        title: "other thread 2",
-        views: 20
-      },
-      {
-        id: "4",
-        creator: { id: "1", username: "Dima", online: true },
-        date: 1563138127,
-        comments: [comments.getDummyComments()[0]],
-        title: "other thread 3",
-        views: 20
-      }
-    ];
+  constructor(
+    private comments: CommentsService,
+    private http: HttpClient,
+    private usersService: UsersService
+  ) {}
+
+  addThread(title: string, comment: string) {
+    return this.http.post(environment.serverUrl + "/api/threads/add", {
+      title,
+      comment,
+      ...this.getAuthObject()
+    });
+  }
+
+  getAllThreads() {
+    return this.http.post(environment.serverUrl + "/api/threads", this.getAuthObject());
   }
 
   getDummyThreads(): Thread[] {
     return this.dummyThreads;
   }
 
-  getThreadById(id: string): Thread {
-    return this.dummyThreads.find(t => t.id === id);
+  getThreadById(id: string){
+    
+    return this.http.post(environment.serverUrl + "/api/threads", {
+      ...this.getAuthObject(),
+      thread_id:id
+    });
+  }
+  getAuthObject(){
+    return {
+      username:this.usersService.getLoggedInUsername(),
+      authToken: localStorage.getItem('authToken')
+    }
   }
 }

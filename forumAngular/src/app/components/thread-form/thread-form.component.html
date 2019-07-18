@@ -1,1 +1,41 @@
-<p>thread-form works!</p>
+<form
+  class="jumbotron w-75 ml-auto mr-auto mt-5"
+  (submit)="onSubmit()"     
+  method="POST"
+>
+  <h3>Add new thread:</h3>
+  <div class="input-group">
+    <div class="input-group-prepend">
+      <span class="input-group-text">Title:</span>
+    </div>
+    <input
+      type="text"
+      name="thread-title"
+      class="form-control"
+      [(ngModel)]="title"
+      [ngClass]="{ 'is-invalid': showErrors && title.length === 0 }"
+    />
+    <div
+      class="invalid-feedback"
+      *ngIf="showErrors && title.length === 0"
+
+    >
+      The title can't be empty
+    </div>
+  </div>
+  <div class="input-group">
+    <textarea
+      name="main-comment"
+      id="main-comment"
+      cols="30"
+      rows="10"
+      class="form-control"
+      [(ngModel)]="comment"
+      [ngClass]="{ 'is-invalid': showErrors && comment.length === 0 }"
+    ></textarea>
+    <div class="invalid-feedback" *ngIf="showErrors && comment.length === 0">
+      The text can't be empty
+    </div>
+  </div>
+  <button type="submit" class="btn btn-primary">Submit</button>
+</form>

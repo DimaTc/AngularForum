@@ -1,10 +1,9 @@
 <div class="container">
-  <div class="controls ml-2 mb-4 mt-5">
-    <button class="btn btn-success">New Thread</button>
+  <div class="controls ml-2 mb-4 mt-5 border-bottom d-flex justify-content-between">
+    <button class="btn btn-success" [routerLink]="['/newThread']">New Thread</button>
+    <span class="mr-5 align-self-end font-weight-bold border-left pl-4">Last comment</span>
   </div>
   <div class="thread" *ngFor="let thread of threads">
-    <!-- <a > -->
     <thread [routerLink]="['/thread/' + thread.id]" [thread]="thread"></thread>
-    <!-- </a> -->
   </div>
 </div>
