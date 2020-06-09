@@ -31,7 +31,7 @@ def start_server(port=80, dbg=False, mongo_uri="", db_name=""):
 
     if dbg:
         CORS(app)
-    app.run(debug=dbg, port=port)
+    app.run(debug=dbg, port=port, host="0.0.0.0")
 
 
 def get_auth_token(user, passhash):
