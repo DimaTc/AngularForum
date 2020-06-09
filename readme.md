@@ -1,5 +1,6 @@
 # Angular basic Forum
-Basic minimalistic forum to play with angular + flask
+Basic minimalistic forum to play with angular + flask.
+You can check out the forum in [in this link](https://dt-ng-forum.herokuapp.com/)
 ![screenshot](https://i.imgur.com/PolijLF.png)
 
 ### Installation (python 3+)
