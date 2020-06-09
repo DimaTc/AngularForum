@@ -2,6 +2,7 @@ import { Comment } from "./../../models/Comment";
 import { CommentsService } from "./../../comments.service";
 import { Component, OnInit, Input } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
+import { Location } from "@angular/common";
 import { Thread } from "src/app/models/Thread";
 import { ThreadsService } from "src/app/threads.service";
 
@@ -26,7 +27,8 @@ export class ThreadComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private threadService: ThreadsService,
-    private commentsService: CommentsService
+    private commentsService: CommentsService,
+    private _location: Location
   ) {}
   ngOnInit() {
     this.test = Date.now();
@@ -59,6 +61,10 @@ export class ThreadComponent implements OnInit {
         });
       });
     }
+  }
+
+  backClicked(){
+    this._location.back();
   }
 
   onSubmit() {

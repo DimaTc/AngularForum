@@ -1,0 +1,5 @@
+$bgColor:lightslategrey;
+
+.controls{
+    border-color: darken($color: $bgColor, $amount: 20%);
+}

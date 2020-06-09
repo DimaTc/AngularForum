@@ -3,10 +3,11 @@ $borderColor: rgb(64, 103, 219);
 $foreColor: complement($bgColor);
 .thread-preview {
   cursor: pointer;
+  color:black;
   font-weight: bold;
   overflow: hidden;
   border-radius: 0.5em;
-  box-shadow: 0 1em 5em 1em $bgColor;
+  box-shadow: 0.2em .2em 1em 0 $bgColor;
   border: 2px solid $borderColor;
   .last-comment {
     background-color: $bgColor;
@@ -24,10 +25,13 @@ $foreColor: complement($bgColor);
 
 .thread-content {
   border-radius: 1em;
+  color:black;
+  background-color: transparent;
 
   .comments {
     overflow: hidden;
     margin: 0;
+    padding:0;
     border-radius: 1em;
   }
 }

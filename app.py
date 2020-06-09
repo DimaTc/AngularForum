@@ -1,27 +1,41 @@
+import sys
 from flask_cors import CORS
-from flask import Flask, request, jsonify,render_template
+from flask import Flask, request, jsonify, render_template
 from flask_pymongo import PyMongo, DESCENDING, ObjectId
 import hashlib
 import time
 import random
+import argparse
+
 app = Flask(__name__)
-app.config['MONGO_DBNAME'] = 'forum'
-app.config['MONGO_URI'] = 'mongodb://localhost:27017/forum' #Enter your DB server address
+userCollection = None
+commentCollection = None
+threadCollection = None
+debug_flag = False
 
-# for development
-# CORS(app)
-#
 
-mongo = PyMongo(app)
+def start_server(port=80, dbg=False, mongo_uri="", db_name=""):
+    if dbg:
+        print("Starting server... ")
+        print("DB_URL:{} | DB_NAME:{} | PORT:{} ".format(mongo_uri, db_name, port))
+    debug_flag = dbg
+    app.config['MONGO_DBNAME'] = db_name
+    # Enter your DB server address
+    app.config['MONGO_URI'] = mongo_uri
 
-userCollection = mongo.db.users
-commentCollection = mongo.db.comments
-threadCollection = mongo.db.threads
+    mongo = PyMongo(app)
+    global userCollection, commentCollection, threadCollection
+    userCollection = mongo.db.users
+    commentCollection = mongo.db.comments
+    threadCollection = mongo.db.threads
+
+    if dbg:
+        CORS(app)
+    app.run(debug=dbg, port=port)
 
 
 def get_auth_token(user, passhash):
     return str(hashlib.sha1((user + passhash + str(time.time() * (random.random() + 1681))).encode()).hexdigest())
-
 
 
 
@@ -137,10 +151,11 @@ def get_threads():
         if db_user['username'] != username:
             return jsonify({'status': 'error', 'error': 'authintication error'})
         try:
-            thread_id =  ObjectId(request.get_json()['thread_id'])
+            thread_id = ObjectId(request.get_json()['thread_id'])
             db_threads = threadCollection.find({'_id': thread_id})
-            #add view if a specific thread was selected
-            threadCollection.update_one({'_id':thread_id},{'$inc':{'views':1}})
+            # add view if a specific thread was selected
+            threadCollection.update_one(
+                {'_id': thread_id}, {'$inc': {'views': 1}})
         except:
             db_threads = threadCollection.find()
         threads = []
@@ -169,7 +184,9 @@ def get_threads():
                     "last_comment": last_comment
                 })
             except Exception as e:
+                e_type, e_obj, e_tb = sys.exc_info()
                 print("Error with a thread:" + str(e))
+                print(e_type, e_obj, e_tb.tb_lineno)
 
         return jsonify({'status': 'ok', 'threads': threads})
     except Exception as e:
@@ -232,7 +249,8 @@ def add_comment():
             'content': comment_content,
             'thread': thread_id
         })
-        print(comment_inserted.inserted_id)
+        if debug_flag:
+            print(comment_inserted.inserted_id)
         thread_db = threadCollection.update_one(
             {'_id': thread_id},
             {'$push':  {
@@ -240,11 +258,11 @@ def add_comment():
             }}
         )
 
-        return jsonify({'status': 'ok','comment':{
-            'content':comment_content,
-            'creator':db_user['username'],
+        return jsonify({'status': 'ok', 'comment': {
+            'content': comment_content,
+            'creator': db_user['username'],
             'date': int(time.time()),
-            'id':str(comment_inserted.inserted_id)
+            'id': str(comment_inserted.inserted_id)
         }})
     except Exception as e:
         print("Exception in adding comment:" + str(e))
@@ -278,9 +296,27 @@ def get_comments():
         return jsonify({'status': 'error', 'error': 'unknown error'})
 
 
-
 @app.route('/')
 def index():
     return render_template('index.html')
 
-app.run(debug=True, port=1234)
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(
+        description="----======Forum Server======----")
+        
+    parser.add_argument("-d", action="store", required=True,
+                        dest="db_url", help="MongoDB url")
+    
+    parser.add_argument("-n", action="store", required=True,
+                        dest="db_name", help="DB name")
+                        
+    parser.add_argument("-p", action="store", type=int, 
+                        dest="port", default="80", help="Port of the server")
+    
+    
+    parser.add_argument("--debug", action="store_true", 
+                        default=False, dest="dbg", help="DEBUG flag")
+
+    args = parser.parse_args()
+    start_server(port=args.port, dbg=args.dbg,mongo_uri=args.db_url, db_name=args.db_name)

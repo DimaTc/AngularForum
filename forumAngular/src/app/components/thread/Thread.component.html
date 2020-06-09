@@ -37,8 +37,10 @@
     class="thread-content jumbotron container"
     *ngIf="!loadingComments && !loadingThread; else load_screen"
   >
+  <button class="btn btn-info float-left text-white font-weight-bold" (click)="backClicked()">Back</button>
     <div class="thread-title text-center">
       <h2>{{ thread.title }}</h2>
+
     </div>
     <div class="comments">
       <div class="comment" *ngFor="let comment of comments">
