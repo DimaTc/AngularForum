@@ -1,6 +1,7 @@
 import { ThreadsService } from './../../threads.service';
-import { Component, OnInit } from "@angular/core";
+import { Component } from "@angular/core";
 import { Router } from '@angular/router';
+// import {  } from 'events';
 
 @Component({
   selector: "app-thread-form",
@@ -8,9 +9,12 @@ import { Router } from '@angular/router';
   styleUrls: ["./thread-form.component.scss"]
 })
 export class ThreadFormComponent {
+
   title: string = "";
   comment: string = "";
   showErrors: boolean = false;
+
+
   constructor(private threadService: ThreadsService, private router: Router) {}
 
   onSubmit() {
@@ -26,4 +30,5 @@ export class ThreadFormComponent {
         this.router.navigate([''])
     });
   }
+
 }

@@ -11,6 +11,7 @@ import { Router } from "@angular/router";
 export class MainPageComponent {
   currentUser: User;
   waiting = false;
+  childWaiting = true;
   failed = false;
   constructor(private router: Router, private userService: UsersService) {
     this.getUser();
@@ -44,5 +45,10 @@ export class MainPageComponent {
     localStorage.removeItem("username");
     this.currentUser = undefined;
     this.router.navigate(["login"]);
+  }
+
+  childLoaded(){
+    this.childWaiting = false;
+    console.log("Done")
   }
 }
